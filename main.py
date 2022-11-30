@@ -5,7 +5,7 @@ import math
 
 
 def randomly_perturb_graph(G, percentage):
-    perturbations = math.floor(nx.number_of_nodes(G) * percentage)
+    perturbations = math.floor(nx.number_of_edges(G) * percentage)
 
     # TODO: create variant that cals nx edges and non edges once
 
