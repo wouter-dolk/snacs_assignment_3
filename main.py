@@ -21,3 +21,5 @@ def randomly_perturb_graph(G, percentage):
 
 G = nx.ring_of_cliques(10, 10)
 randomly_perturb_graph(G)
+
+# make function that prints statistics for a network, so we can already compare utility of pre and post perturbation
