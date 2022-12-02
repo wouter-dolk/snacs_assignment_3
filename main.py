@@ -4,22 +4,49 @@ import random
 import math
 
 
-def randomly_perturb_graph(G, percentage):
-    perturbations = math.floor(nx.number_of_edges(G) * percentage)
-
-    # TODO: create variant that cals nx edges and non edges once
+def randomly_perturb_graph_complete(graph, percentage):
+    perturbed_graph = graph.copy()
+    perturbations = math.floor(nx.number_of_edges(perturbed_graph) * percentage)
 
     for i in range(perturbations):
-        edge_to_delete = random.choice(list(nx.edges(G)))
-        edge_to_add = random.choice(list(nx.non_edges(G)))
+        edge_to_delete = random.choice(list(nx.edges(perturbed_graph)))
+        edge_to_add = random.choice(list(nx.non_edges(perturbed_graph)))
 
-        G.remove_edge(*edge_to_delete)
-        G.add_edge(*edge_to_add)
+        perturbed_graph.remove_edge(*edge_to_delete)
+        perturbed_graph.add_edge(*edge_to_add)
 
-    return G
+    return perturbed_graph
 
+
+def randomly_perturb_graph_faster(graph, percentage):
+    perturbed_graph = graph.copy()
+    perturbations = math.floor(nx.number_of_edges(perturbed_graph) * percentage)
+
+    edges = list(nx.edges(perturbed_graph))
+    non_edges = list(nx.non_edges(perturbed_graph))
+
+    for i in range(perturbations):
+        edge_to_delete = random.choice(edges)
+        edge_to_add = random.choice(non_edges)
+
+        perturbed_graph.remove_edge(*edge_to_delete)
+        perturbed_graph.add_edge(*edge_to_add)
+
+        # Update edge and non_edge lists
+        edges.remove(edge_to_delete)
+        edges.append(edge_to_add)
+        non_edges.remove(edge_to_add)
+        non_edges.append(edge_to_delete)
+
+    return perturbed_graph
+
+
+# def print_statistics(graph):
 
 G = nx.ring_of_cliques(10, 10)
-randomly_perturb_graph(G)
+nx.draw(G)
+plt.show()
 
-# make function that prints statistics for a network, so we can already compare utility of pre and post perturbation
+G_prime = randomly_perturb_graph_faster(G, 0.1)
+nx.draw(G_prime)
+plt.show()
