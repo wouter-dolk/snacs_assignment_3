@@ -1,5 +1,6 @@
 import networkx as nx
 import matplotlib.pyplot as plt
+from statistics import mean
 import random
 import math
 
@@ -41,12 +42,26 @@ def randomly_perturb_graph_faster(graph, percentage):
     return perturbed_graph
 
 
-# def print_statistics(graph):
+def print_statistics(graph):
+    closeness = nx.closeness_centrality(graph)
+    closeness_cent = mean(closeness.values())
+
+    print('*** Statistics ***')
+    print(f"Nodes: {graph.number_of_nodes()}")
+    print(f"Edges: {graph.number_of_edges()}")
+    print(f"Avg. Degree: -")
+    print(f"Diameter: {nx.diameter(graph)}")
+    print(f"Avg. Path length: -")
+    print(f"Avg. Closeness: {closeness_cent}")
+    print(f"Avg. Betweenness: -")
+    print(f"Clust. Coeff.: -")
 
 G = nx.ring_of_cliques(10, 10)
-nx.draw(G)
-plt.show()
+# nx.draw(G)
+# plt.show()
 
 G_prime = randomly_perturb_graph_faster(G, 0.1)
-nx.draw(G_prime)
-plt.show()
+# nx.draw(G_prime)
+# plt.show()
+
+print_statistics(G)
