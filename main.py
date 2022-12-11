@@ -1,11 +1,10 @@
-import networkx as nx
-import matplotlib.pyplot as plt
-from statistics import mean
-import random
 import math
+import random
+from statistics import mean
+import networkx as nx
 
 
-def randomly_perturb_graph_complete(graph, percentage):
+def randomly_perturb_graph_v1(graph, percentage):
     perturbed_graph = graph.copy()
     perturbations = math.floor(nx.number_of_edges(perturbed_graph) * percentage)
 
@@ -19,7 +18,7 @@ def randomly_perturb_graph_complete(graph, percentage):
     return perturbed_graph
 
 
-def randomly_perturb_graph_faster(graph, percentage):
+def randomly_perturb_graph_v2(graph, percentage):
     perturbed_graph = graph.copy()
     perturbations = math.floor(nx.number_of_edges(perturbed_graph) * percentage)
 
@@ -47,12 +46,12 @@ def print_statistics(graph):
     closeness_cent = mean(closeness.values())
 
     print('*** Statistics ***')
-    print(f"Avg. Degree: {mean([x[1] for x in graph.degree()])}")
+    print(f"Degree: what does the paper measure?")
     print(f"Diameter: {nx.diameter(graph)}")
-    print(f"Avg. Path length: -")
-    print(f"Avg. Closeness: {closeness_cent}")
-    print(f"Avg. Betweenness: -")
-    print(f"Clust. Coeff.: -")
+    print(f"Avg. Shortest path length: {round(nx.average_shortest_path_length(graph), 3)}")
+    print(f"Avg. Closeness: {round(closeness_cent, 3)}")
+    print(f"Avg. Betweenness: {round(mean(nx.betweenness_centrality(graph).values()), 3)}")
+    print(f"Clust. Coeff.: {round(nx.average_clustering(graph), 3)}")
 
 # TODO: reindentification experiment
 
@@ -60,9 +59,7 @@ def print_statistics(graph):
 
 
 G = nx.ring_of_cliques(10, 10)
-G_prime = randomly_perturb_graph_faster(G, 0.1)
+G_prime = randomly_perturb_graph_v2(G, 0.1)
 
 print_statistics(G)
 print_statistics(G_prime)
-
-print(G.degree())
