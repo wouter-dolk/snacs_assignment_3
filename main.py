@@ -47,21 +47,22 @@ def print_statistics(graph):
     closeness_cent = mean(closeness.values())
 
     print('*** Statistics ***')
-    print(f"Nodes: {graph.number_of_nodes()}")
-    print(f"Edges: {graph.number_of_edges()}")
-    print(f"Avg. Degree: -")
+    print(f"Avg. Degree: {mean([x[1] for x in graph.degree()])}")
     print(f"Diameter: {nx.diameter(graph)}")
     print(f"Avg. Path length: -")
     print(f"Avg. Closeness: {closeness_cent}")
     print(f"Avg. Betweenness: -")
     print(f"Clust. Coeff.: -")
 
-G = nx.ring_of_cliques(10, 10)
-# nx.draw(G)
-# plt.show()
+# TODO: reindentification experiment
 
+# TODO: custom perturbation
+
+
+G = nx.ring_of_cliques(10, 10)
 G_prime = randomly_perturb_graph_faster(G, 0.1)
-# nx.draw(G_prime)
-# plt.show()
 
 print_statistics(G)
+print_statistics(G_prime)
+
+print(G.degree())
