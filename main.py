@@ -42,13 +42,15 @@ def randomly_perturb_graph_v2(graph, percentage):
 
     return perturbed_graph
 
+# random node with degree > 1
+
 
 # TODO: custom perturbation
 # random perturb and then remove candidate set sizes of 1 and add them to others
 
 def print_statistics(graph):
     print('*** Statistics ***')
-    print(f"Degree: what does the paper measure?")
+    print(f"Degree: ")
     print(f"Diameter: {nx.diameter(graph)}")
     print(f"Avg. Shortest path length: {round(nx.average_shortest_path_length(graph), 3)}")
     print(f"Avg. Closeness: {round(mean(nx.closeness_centrality(graph).values()), 3)}")
@@ -131,9 +133,12 @@ def perturbation_experiment(graph, name):
     print_statistics(randomly_perturb_graph_v2(graph, 1))
 
 
+# G = nx.read_edgelist('data/enron.tsv', delimiter='\t', nodetype=int, encoding="utf-8")
 # G = nx.read_edgelist('data/CEOclubmembership.csv', delimiter=',', nodetype=int, encoding="utf-8")
-# G = nx.ring_of_cliques(10, 10)
-G = nx.les_miserables_graph()
+# G = nx.read_edgelist('data/edges.csv', delimiter=',', nodetype=int, encoding="utf-8")
+G = nx.ring_of_cliques(10, 10)
+# G = nx.florentine_families_graph()
+# print_statistics(randomly_perturb_graph_v2(G, 0.01))
 perturbation_experiment(G, 'CEO club membership')
 
 
