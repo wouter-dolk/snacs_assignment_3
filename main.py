@@ -82,9 +82,10 @@ def randomly_perturb_graph_v3(graph, percentage):
         non_edges.append(edge_to_delete)
 
     end = time.time()
-    print(f'Network perturbation time: {round(end - start, 3)}s')
+    # print(f'Network perturbation time: {round(end - start, 3)}s')
 
     return perturbed_graph
+
 
 # TODO: custom perturbation
 # random perturb and then remove candidate set sizes of 1 and add them to others
@@ -92,8 +93,12 @@ def randomly_perturb_graph_v3(graph, percentage):
 def print_statistics(graph):
     print('*** Statistics ***')
     print(f"Median Degree: {median([tup[1] for tup in graph.degree()])}")
-    print(f"Diameter: {nx.diameter(graph)}")
-    print(f"Avg. Shortest path length: {round(nx.average_shortest_path_length(graph), 3)}")
+    try:
+        print(f"Diameter: {nx.diameter(graph)}")
+        print(f"Avg. Shortest path length: {round(nx.average_shortest_path_length(graph), 3)}")
+    except nx.NetworkXError:
+        print(f"Diameter: -")
+        print(f"Avg. Shortest path length: -")
     print(f"Avg. Closeness: {round(mean(nx.closeness_centrality(graph).values()), 3)}")
     print(f"Avg. Betweenness: {round(mean(nx.betweenness_centrality(graph).values()), 3)}")
     print(f"Clust. Coeff.: {round(nx.average_clustering(graph), 3)}")
@@ -132,8 +137,10 @@ def h1_candidate_sets(graph):
 def perturbation_experiment(graph, name):
     candidate_sets = [h1_candidate_sets(graph)]
 
+    perturbed_graph = graph
     for i in range(1, 11):
-        perturbed_graph = randomly_perturb_graph_v3(graph, i * 0.01)
+        # Add 1% perturbation every time
+        perturbed_graph = randomly_perturb_graph_v3(perturbed_graph, 0.01)
         candidate_sets.append(h1_candidate_sets(perturbed_graph))
 
     x_axis = [x for x in range(0, 11)]
@@ -141,17 +148,20 @@ def perturbation_experiment(graph, name):
     y2 = np.array([])
     y3 = np.array([])
     y4 = np.array([])
+    y5 = np.array([])
 
     for candidate_set in candidate_sets:
         y1 = np.append(y1, candidate_set['1'])
         y2 = np.append(y2, candidate_set['2-4'])
         y3 = np.append(y3, candidate_set['5-10'])
         y4 = np.append(y4, candidate_set['11-20'])
+        y5 = np.append(y5, candidate_set['20+'])
 
     # Stack the candidate set proportions
     y2 = y1 + y2
     y3 = y2 + y3
     y4 = y3 + y4
+    y5 = y4 + y5
 
     # Plot reinditification using H1
     fig, ax = plt.subplots()
@@ -159,6 +169,7 @@ def perturbation_experiment(graph, name):
     ax.fill_between(x_axis, y1, y2, color='blue', alpha=0.6)
     ax.fill_between(x_axis, y2, y3, color='blue', alpha=0.3)
     ax.fill_between(x_axis, y4, y3, color='blue', alpha=0.2)
+    ax.fill_between(x_axis, y5, y4, color='white', alpha=0)
     plt.xticks([0, 5, 10], ['0%', '5%', '10%'])
     plt.yticks([0.00, 0.20, 0.40, 0.60, 0.80, 1.00])
     plt.margins(x=0, y=0)
@@ -167,13 +178,25 @@ def perturbation_experiment(graph, name):
     plt.title(f'{name}')
     plt.show()
 
+
+def utility_experiment(graph):
     # Statistics for 0, 5, 10 and 100% perturbation
     print_statistics(graph)
     print_statistics(randomly_perturb_graph_v3(graph, 0.05))
     print_statistics(randomly_perturb_graph_v3(graph, 0.1))
     print_statistics(randomly_perturb_graph_v3(graph, 1))
 
-
+# Old datasets
 # G = nx.read_edgelist('data/enron.tsv', delimiter='\t', nodetype=int, encoding="utf-8")
-G = nx.read_edgelist('data/CEOclubmembership.csv', delimiter=',', nodetype=int, encoding="utf-8")
-perturbation_experiment(G, 'CEO club membership')
+# G = nx.read_edgelist('data/CEOclubmembership.csv', delimiter=',', nodetype=int, encoding="utf-8")
+# G = nx.read_edgelist('data/dolphin.csv', delimiter=',', nodetype=int, encoding="utf-8")
+
+# Current datasets
+# G = nx.read_edgelist('data/football.csv', delimiter=',', nodetype=int, encoding="utf-8")
+# G = nx.read_edgelist('data/gameofthrone.csv', delimiter=',', nodetype=int, encoding="utf-8", data=(("weight", float),))
+# G = nx.read_edgelist('data/copenhagen.csv', delimiter=',', nodetype=int, encoding="utf-8")
+# G = nx.read_edgelist('data/email.csv', delimiter=',', nodetype=int, encoding="utf-8")
+G = nx.read_edgelist('data/bitcoin.csv', delimiter=',', nodetype=int, encoding="utf-8", data=(("rating", float),("time", float)))
+
+# perturbation_experiment(G, 'Bitcoin')
+utility_experiment(G)
