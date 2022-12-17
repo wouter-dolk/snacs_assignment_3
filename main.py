@@ -1,12 +1,15 @@
 import math
 import random
-from statistics import mean
+from statistics import mean, median
 import networkx as nx
 import matplotlib.pyplot as plt
 import numpy as np
+import time
 
 
 def randomly_perturb_graph_v1(graph, percentage):
+    start = time.time()
+
     perturbed_graph = graph.copy()
     perturbations = math.floor(nx.number_of_edges(perturbed_graph) * percentage)
 
@@ -17,10 +20,14 @@ def randomly_perturb_graph_v1(graph, percentage):
         perturbed_graph.remove_edge(*edge_to_delete)
         perturbed_graph.add_edge(*edge_to_add)
 
+    end = time.time()
+    print(f'Network perturbation time: {round(end - start, 3)}s')
+
     return perturbed_graph
 
 
 def randomly_perturb_graph_v2(graph, percentage):
+    start = time.time()
     perturbed_graph = graph.copy()
     perturbations = math.floor(nx.number_of_edges(perturbed_graph) * percentage)
 
@@ -40,17 +47,51 @@ def randomly_perturb_graph_v2(graph, percentage):
         non_edges.remove(edge_to_add)
         non_edges.append(edge_to_delete)
 
+    end = time.time()
+    print(f'Network perturbation time: {round(end - start, 3)}s')
+
     return perturbed_graph
 
-# random node with degree > 1
 
+def randomly_perturb_graph_v3(graph, percentage):
+    start = time.time()
+    perturbed_graph = graph.copy()
+    perturbations = math.floor(nx.number_of_edges(perturbed_graph) * percentage)
+
+    edges = list(nx.edges(perturbed_graph))
+    non_edges = list(nx.non_edges(perturbed_graph))
+
+    for i in range(perturbations):
+        edge_to_delete = random.choice(edges)
+        perturbed_graph.remove_edge(*edge_to_delete)
+
+        # Prevent isolate nodes
+        isolates = list(nx.isolates(G))
+        if len(isolates) > 0:
+            filtered_non_edges = list(filter(lambda x: isolates[0] in x, non_edges))
+            edge_to_add = random.choice(filtered_non_edges)
+        else:
+            edge_to_add = random.choice(non_edges)
+
+        perturbed_graph.add_edge(*edge_to_add)
+
+        # Update edge and non_edge lists
+        edges.remove(edge_to_delete)
+        edges.append(edge_to_add)
+        non_edges.remove(edge_to_add)
+        non_edges.append(edge_to_delete)
+
+    end = time.time()
+    print(f'Network perturbation time: {round(end - start, 3)}s')
+
+    return perturbed_graph
 
 # TODO: custom perturbation
 # random perturb and then remove candidate set sizes of 1 and add them to others
 
 def print_statistics(graph):
     print('*** Statistics ***')
-    print(f"Degree: ")
+    print(f"Median Degree: {median([tup[1] for tup in graph.degree()])}")
     print(f"Diameter: {nx.diameter(graph)}")
     print(f"Avg. Shortest path length: {round(nx.average_shortest_path_length(graph), 3)}")
     print(f"Avg. Closeness: {round(mean(nx.closeness_centrality(graph).values()), 3)}")
@@ -92,7 +133,7 @@ def perturbation_experiment(graph, name):
     candidate_sets = [h1_candidate_sets(graph)]
 
     for i in range(1, 11):
-        perturbed_graph = randomly_perturb_graph_v2(graph, i * 0.01)
+        perturbed_graph = randomly_perturb_graph_v3(graph, i * 0.01)
         candidate_sets.append(h1_candidate_sets(perturbed_graph))
 
     x_axis = [x for x in range(0, 11)]
@@ -126,19 +167,13 @@ def perturbation_experiment(graph, name):
     plt.title(f'{name}')
     plt.show()
 
-    # Statistics for 0, 5 10 and 100% perturbation
+    # Statistics for 0, 5, 10 and 100% perturbation
     print_statistics(graph)
-    print_statistics(randomly_perturb_graph_v2(graph, 0.05))
-    print_statistics(randomly_perturb_graph_v2(graph, 0.1))
-    print_statistics(randomly_perturb_graph_v2(graph, 1))
+    print_statistics(randomly_perturb_graph_v3(graph, 0.05))
+    print_statistics(randomly_perturb_graph_v3(graph, 0.1))
+    print_statistics(randomly_perturb_graph_v3(graph, 1))
 
 
 # G = nx.read_edgelist('data/enron.tsv', delimiter='\t', nodetype=int, encoding="utf-8")
-# G = nx.read_edgelist('data/CEOclubmembership.csv', delimiter=',', nodetype=int, encoding="utf-8")
-# G = nx.read_edgelist('data/edges.csv', delimiter=',', nodetype=int, encoding="utf-8")
-G = nx.ring_of_cliques(10, 10)
-# G = nx.florentine_families_graph()
-# print_statistics(randomly_perturb_graph_v2(G, 0.01))
+G = nx.read_edgelist('data/CEOclubmembership.csv', delimiter=',', nodetype=int, encoding="utf-8")
 perturbation_experiment(G, 'CEO club membership')
-
-
