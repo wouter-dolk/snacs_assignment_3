@@ -189,13 +189,13 @@ def perturbation_experiment(graph, name):
         y2 = np.append(y2, candidate_set['2-4'])
         y3 = np.append(y3, candidate_set['5-10'])
         y4 = np.append(y4, candidate_set['11-20'])
-        y5 = np.append(y5, candidate_set['20+'])
+        # y5 = np.append(y5, candidate_set['20+'])
 
     # Stack the candidate set proportions
     y2 = y1 + y2
     y3 = y2 + y3
     y4 = y3 + y4
-    y5 = y4 + y5
+    # y5 = y4 + y5
 
     # Plot reinditification using H1
     fig, ax = plt.subplots()
@@ -203,7 +203,7 @@ def perturbation_experiment(graph, name):
     ax.fill_between(x_axis, y1, y2, color='blue', alpha=0.6)
     ax.fill_between(x_axis, y2, y3, color='blue', alpha=0.3)
     ax.fill_between(x_axis, y4, y3, color='blue', alpha=0.2)
-    ax.fill_between(x_axis, y5, y4, color='white', alpha=0)
+    # ax.fill_between(x_axis, y5, y4, color='white', alpha=0)
     plt.xticks([0, 5, 10], ['0%', '5%', '10%'])
     plt.yticks([0.00, 0.20, 0.40, 0.60, 0.80, 1.00])
     plt.margins(x=0, y=0)
@@ -232,13 +232,13 @@ def perturbation_experiment_2(graph, name):
         y2 = np.append(y2, candidate_set['2-4'])
         y3 = np.append(y3, candidate_set['5-10'])
         y4 = np.append(y4, candidate_set['11-20'])
-        y5 = np.append(y5, candidate_set['20+'])
+        # y5 = np.append(y5, candidate_set['20+'])
 
     # Stack the candidate set proportions
     y2 = y1 + y2
     y3 = y2 + y3
     y4 = y3 + y4
-    y5 = y4 + y5
+    # y5 = y4 + y5
 
     # Plot reinditification using H1
     fig, ax = plt.subplots()
@@ -246,9 +246,9 @@ def perturbation_experiment_2(graph, name):
     ax.fill_between(x_axis, y1, y2, color='purple', alpha=0.6)
     ax.fill_between(x_axis, y2, y3, color='purple', alpha=0.3)
     ax.fill_between(x_axis, y4, y3, color='purple', alpha=0.2)
-    ax.fill_between(x_axis, y5, y4, color='white', alpha=0)
+    # ax.fill_between(x_axis, y5, y4, color='white', alpha=0)
     # plt.xticks([0, 5, 10], ['0%', '5%', '10%'])
-    plt.yticks([0.00, 0.20, 0.40, 0.60, 0.80, 1.00])
+    plt.yticks([0.00, 0.10, 0.20, 0.40, 0.60, 0.80, 1.00])
     plt.margins(x=0, y=0)
     plt.xlabel('Maximum step size')
     plt.ylabel('Node proporion')
@@ -263,6 +263,10 @@ def utility_experiment(graph):
     print_statistics(randomly_perturb_graph_v3(graph, 0.1))
     print_statistics(randomly_perturb_graph_v3(graph, 1))
 
+def utility_experiment_2(graph):
+    # max step size 10
+    print_statistics(custom_perturbation(graph, 10))
+
 
 # Old datasets
 # G = nx.read_edgelist('data/enron.tsv', delimiter='\t', nodetype=int, encoding="utf-8")
@@ -270,12 +274,13 @@ def utility_experiment(graph):
 # G = nx.read_edgelist('data/dolphin.csv', delimiter=',', nodetype=int, encoding="utf-8")
 
 # Current datasets
-G = nx.read_edgelist('data/football.csv', delimiter=',', nodetype=int, encoding="utf-8")
+# G = nx.read_edgelist('data/football.csv', delimiter=',', nodetype=int, encoding="utf-8")
 # G = nx.read_edgelist('data/gameofthrone.csv', delimiter=',', nodetype=int, encoding="utf-8", data=(("weight", float),))
 # G = nx.read_edgelist('data/copenhagen.csv', delimiter=',', nodetype=int, encoding="utf-8")
 # G = nx.read_edgelist('data/email.csv', delimiter=',', nodetype=int, encoding="utf-8")
-# G = nx.read_edgelist('data/bitcoin.csv', delimiter=',', nodetype=int, encoding="utf-8", data=(("rating", float),("time", float)))
+G = nx.read_edgelist('data/bitcoin.csv', delimiter=',', nodetype=int, encoding="utf-8", data=(("rating", float),("time", float)))
 
-# perturbation_experiment(G, 'Bitcoin')
-perturbation_experiment_2(G, 'Footballl')
-# utility_experiment(G)
+perturbation_experiment(G, 'Bitcoin')
+perturbation_experiment_2(G, 'Bitcoin')
+utility_experiment(G)
+utility_experiment_2(G)
